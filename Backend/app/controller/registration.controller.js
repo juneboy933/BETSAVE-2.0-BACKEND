@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import env from "../config.js";
 import User from "../../database/models/user.model.js";
 import Wallet from "../../database/models/wallet.model.js";
-import { runInTransaction } from "../../service/databaseSession.service.js";
+import { runRequiredTransaction } from "../../service/databaseSession.service.js";
 
 const KENYA_PHONE_REGEX = /^\+254\d{9}$/;
 
@@ -25,7 +25,7 @@ export const registerUser = async (req, res) => {
   }
 
   try {
-    const created = await runInTransaction(async (session) => {
+    const created = await runRequiredTransaction(async (session) => {
       const createOptions = session ? { session } : undefined;
       const user = await User.create(
         [{ phoneNumber: normalizePhone }],

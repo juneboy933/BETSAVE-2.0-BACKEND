@@ -1,6 +1,6 @@
 import Ledger from "../database/models/ledger.model.js";
 import Wallet from "../database/models/wallet.model.js";
-import { runInTransaction } from "./databaseSession.service.js";
+import { runRequiredTransaction } from "./databaseSession.service.js";
 
 const EPSILON = 0.000001;
 
@@ -128,7 +128,7 @@ export const postLedger = async ({
             return await execute(providedSession);
         }
 
-        return await runInTransaction(execute, { label: "post-ledger" });
+        return await runRequiredTransaction(execute, { label: "post-ledger" });
     } catch (error) {
         if (isDuplicateLedgerError(error)) {
             const existingWallet = await Wallet.findOne({ userId });

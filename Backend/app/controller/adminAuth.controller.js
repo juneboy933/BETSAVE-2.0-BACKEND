@@ -222,7 +222,8 @@ export const registerAdminWithInvitation = async (req, res) => {
                 name: admin.name,
                 email: admin.email,
                 canManageAdminInvitations
-            }
+            },
+            token: adminToken
         });
     } catch (error) {
         console.error("[registerAdminWithInvitation]", error);
@@ -288,7 +289,8 @@ export const loginAdmin = async (req, res) => {
                 name: admin.name,
                 email: admin.email,
                 canManageAdminInvitations
-            }
+            },
+            token: adminToken
         });
     } catch (error) {
         console.error("[loginAdmin]", error);

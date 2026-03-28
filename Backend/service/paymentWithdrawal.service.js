@@ -2,7 +2,7 @@ import PaymentTransaction from "../database/models/paymentTransaction.model.js";
 import Wallet from "../database/models/wallet.model.js";
 import WithdrawalRequest from "../database/models/withdrawalRequest.model.js";
 import { postLedger } from "./postLedger.service.js";
-import { runInTransaction } from "./databaseSession.service.js";
+import { runRequiredTransaction } from "./databaseSession.service.js";
 import {
     getLiveWithdrawalMinBalanceKes
 } from "./withdrawalEligibility.service.js";
@@ -77,7 +77,7 @@ export const createWithdrawalRequest = async ({
     }
 
     try {
-        return await runInTransaction(async (session) => {
+        return await runRequiredTransaction(async (session) => {
             const createOptions = session ? { session } : undefined;
 
             const [paymentTransaction] = await PaymentTransaction.create([{
@@ -171,7 +171,7 @@ export const createWithdrawalRequest = async ({
 };
 
 export const markWithdrawalDisbursed = async ({ withdrawalRequestId, providerRequestId = null, providerTransactionId = null, externalRef = null, rawCallback = null }) => {
-    return runInTransaction(async (session) => {
+    return runRequiredTransaction(async (session) => {
         let withdrawalRequestQuery = WithdrawalRequest.findById(withdrawalRequestId);
         if (session) {
             withdrawalRequestQuery = withdrawalRequestQuery.session(session);
@@ -244,7 +244,7 @@ export const markWithdrawalDisbursed = async ({ withdrawalRequestId, providerReq
 };
 
 export const markWithdrawalFailed = async ({ withdrawalRequestId, failureReason, rawCallback = null }) => {
-    return runInTransaction(async (session) => {
+    return runRequiredTransaction(async (session) => {
         let withdrawalRequestQuery = WithdrawalRequest.findById(withdrawalRequestId);
         if (session) {
             withdrawalRequestQuery = withdrawalRequestQuery.session(session);

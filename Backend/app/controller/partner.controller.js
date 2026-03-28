@@ -6,6 +6,7 @@ import User from "../../database/models/user.model.js";
 import { sendOTP, verifyOTP } from "../../service/otp.service.js";
 import crypto from "crypto";
 import { sanitizeStructuredData, summarizeUrlForDisplay } from "../../service/redaction.service.js";
+import { resolvePartnerSigningSecret } from "../../service/partnerSecret.service.js";
 
 const CREDENTIALS_SECURITY_NOTICE =
     "Store your API key and API secret securely in your backend secret manager. Do not expose them in client-side code.";
@@ -38,7 +39,7 @@ export const createPartner = async (req, res) => {
         const jwt = await import('jsonwebtoken');
         const token = jwt.sign(
             {
-                partnerId: partner._id.toString(),
+                partnerId: partner.id.toString(),
                 name: partner.name,
                 operatingMode: partner.operatingMode || 'demo'
             },
@@ -72,7 +73,7 @@ export const loginPartner = async (req, res) => {
             });
         }
 
-        const partner = await Partner.findOne({ apiKey }).select("_id name apiKey apiSecret status webhookUrl operatingMode");
+        const partner = await Partner.findOne({ apiKey }).select("_id name apiKey apiSecret apiSecretEncrypted status webhookUrl operatingMode");
         if (!partner) {
             return res.status(401).json({
                 status: "FAILED",
@@ -87,7 +88,15 @@ export const loginPartner = async (req, res) => {
             });
         }
 
-        const expected = Buffer.from(partner.apiSecret, "utf8");
+        const signingSecret = resolvePartnerSigningSecret(partner);
+        if (!signingSecret) {
+            return res.status(401).json({
+                status: "FAILED",
+                reason: "Partner secret not available"
+            });
+        }
+
+        const expected = Buffer.from(signingSecret, "utf8");
         const provided = Buffer.from(apiSecret, "utf8");
         const valid =
             expected.length === provided.length &&
@@ -142,7 +151,7 @@ export const getPartnerCredentials = async (req, res) => {
         }
 
         const partner = await Partner.findById(req.partner.id)
-            .select("_id name apiKey apiSecret status operatingMode");
+            .select("_id name apiKey apiSecret apiSecretEncrypted status operatingMode");
 
         if (!partner) {
             return res.status(404).json({
@@ -162,7 +171,7 @@ export const getPartnerCredentials = async (req, res) => {
             status: "SUCCESS",
             credentials: {
                 apiKey: partner.apiKey,
-                apiSecret: partner.apiSecret
+                apiSecret: resolvePartnerSigningSecret(partner)
             },
             operatingMode: partner.operatingMode || "demo",
             securityNotice: CREDENTIALS_SECURITY_NOTICE

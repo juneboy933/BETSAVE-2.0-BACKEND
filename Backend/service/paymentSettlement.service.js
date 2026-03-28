@@ -1,7 +1,7 @@
 import PaymentTransaction from "../database/models/paymentTransaction.model.js";
 import ReconciliationRun from "../database/models/reconciliationRun.model.js";
 import { postLedger } from "./postLedger.service.js";
-import { runInTransaction } from "./databaseSession.service.js";
+import { runRequiredTransaction } from "./databaseSession.service.js";
 import { parseEventReference } from "./eventReference.service.js";
 import { recordOperationalLogSafe } from "./operationalLog.service.js";
 
@@ -276,7 +276,7 @@ export const runPaybillSettlementReconciliation = async ({
     const providerTotal = normalizedEntries.reduce((sum, entry) => sum + entry.amount, 0);
     const discrepancies = [];
 
-    const summary = await runInTransaction(async (session) => {
+    const summary = await runRequiredTransaction(async (session) => {
         const stats = {
             matched: 0,
             settled: 0,

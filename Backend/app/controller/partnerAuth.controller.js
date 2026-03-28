@@ -132,6 +132,7 @@ export const registerPartnerAuth = async (req, res) => {
                 email: normalizedEmail,
                 operatingMode: partner.operatingMode
             },
+            token,
             apiCredentials: {
                 apiKey,
                 apiSecret
@@ -210,7 +211,8 @@ export const loginPartnerAuth = async (req, res) => {
                 name: partnerAuth.partnerId.name,
                 email: normalizedEmail,
                 operatingMode: partnerAuth.partnerId.operatingMode || "demo"
-            }
+            },
+            token
         });
     } catch (error) {
         console.error("loginPartnerAuth error:", error.message);
@@ -260,7 +262,8 @@ export const refreshPartnerToken = async (req, res) => {
 
         return res.json({
             status: "SUCCESS",
-            refreshed: true
+            refreshed: true,
+            token: newToken
         });
     } catch (error) {
         console.error("refreshPartnerToken error:", error.message);

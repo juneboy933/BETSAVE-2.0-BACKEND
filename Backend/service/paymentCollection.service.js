@@ -1,6 +1,6 @@
 import PaymentTransaction from "../database/models/paymentTransaction.model.js";
 import { postLedger } from "./postLedger.service.js";
-import { runInTransaction } from "./databaseSession.service.js";
+import { runRequiredTransaction } from "./databaseSession.service.js";
 import { deriveDepositSettlementStatus } from "./paymentSettlement.service.js";
 
 const normalizePhone = (phone) => String(phone || "").trim();
@@ -57,7 +57,7 @@ export const confirmDeposit = async ({
     applyWalletCredit = true,
     recordLiabilityLedger = true
 }) => {
-    return runInTransaction(async (session) => {
+    return runRequiredTransaction(async (session) => {
         let paymentTransactionQuery = PaymentTransaction.findById(paymentTransactionId);
         if (session) {
             paymentTransactionQuery = paymentTransactionQuery.session(session);
@@ -129,7 +129,7 @@ export const confirmDeposit = async ({
 };
 
 export const failDeposit = async ({ paymentTransactionId, failureReason, rawCallback = null }) => {
-    return runInTransaction(async (session) => {
+    return runRequiredTransaction(async (session) => {
         let paymentTransactionQuery = PaymentTransaction.findById(paymentTransactionId);
         if (session) {
             paymentTransactionQuery = paymentTransactionQuery.session(session);

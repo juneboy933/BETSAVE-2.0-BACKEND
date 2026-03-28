@@ -1,7 +1,7 @@
 import PartnerUser from "../database/models/partnerUser.model.js";
 import User from "../database/models/user.model.js";
 import Wallet from "../database/models/wallet.model.js";
-import { runInTransaction } from "./databaseSession.service.js";
+import { runRequiredTransaction } from "./databaseSession.service.js";
 
 const KENYA_PHONE_REGEX = /^\+254\d{9}$/;
 
@@ -12,7 +12,7 @@ export const registerPartnerUser = async ({ partner, phone, autoSavingsEnabled }
     }
 
     try {
-        const result = await runInTransaction(async (session) => {
+        const result = await runRequiredTransaction(async (session) => {
             const createOptions = session ? { session } : undefined;
             let userQuery = User.findOne({ phoneNumber: normalizedPhone });
             if (session) {

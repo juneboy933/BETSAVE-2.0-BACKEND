@@ -48,3 +48,9 @@ export const runInTransaction = async (work, options = {}) => {
     logFallbackWarningOnce(label);
     return work(null);
 };
+
+export const runRequiredTransaction = async (work, options = {}) =>
+    runInTransaction(work, {
+        ...options,
+        allowFallback: false
+    });

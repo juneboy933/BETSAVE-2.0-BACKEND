@@ -1,6 +1,10 @@
 import crypto from "crypto";
 
-const apiSecret = "42cc5681965b70b46aa5abb9358c58cbaa0c96152435c2c817bc05140843b2d0";
+const apiSecret = process.env.PARTNER_API_SECRET;
+if (!apiSecret) {
+  console.error("PARTNER_API_SECRET must be set in environment to run this script.");
+  process.exit(1);
+}
 
 const timestamp = Date.now().toString();
 

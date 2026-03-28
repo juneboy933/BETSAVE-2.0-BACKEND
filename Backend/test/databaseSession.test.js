@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
     runInTransaction,
+    runRequiredTransaction,
     setTransactionSupport,
     supportsTransactions
 } from "../service/databaseSession.service.js";
@@ -26,6 +27,17 @@ test("runInTransaction can reject fallback when transactions are required", asyn
         () => runInTransaction(async () => "nope", {
             label: "unit-test-required",
             allowFallback: false
+        }),
+        /transactions are required/i
+    );
+});
+
+test("runRequiredTransaction always rejects when transactions are unavailable", async () => {
+    setTransactionSupport(false);
+
+    await assert.rejects(
+        () => runRequiredTransaction(async () => "nope", {
+            label: "unit-test-required-helper"
         }),
         /transactions are required/i
     );
