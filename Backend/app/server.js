@@ -101,6 +101,16 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Base route so platform checks or direct browser visits do not 404 on "/"
+app.get('/', (_, res) => {
+    res.status(200).json({
+        status: 'OK',
+        service: 'BETSAVE CORE',
+        message: 'Service is running. Use /health for readiness status.',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Health check
 app.get('/health', (_, res) => {
     const dbReady = isDatabaseReady();
