@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app/server.js",
+  "scripts": {
+    "start": "node app/server.js",
+    "dev": "nodemon app/server.js",
+    "worker:event": "node worker/event.worker.js",
+    "worker:webhook": "node worker/webhook.worker.js",
+    "worker:recovery": "node worker/recovery.worker.js",
+    "migrate:admin-invitations": "node migrateAdminInvitations.js",
+    "test": "node --test --test-concurrency=1 --experimental-test-isolation=none"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.13.5",
+    "bcrypt": "^6.0.0",
+    "bullmq": "^5.69.2",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "helmet": "^7.0.0",
+    "express-rate-limit": "^7.0.0",
+    "joi": "^17.10.0",
+    "jsonwebtoken": "^9.0.0",
+    "winston": "^3.11.0",
+    "ioredis": "^5.9.3",
+    "mongoose": "^9.2.1"
+  }
+}

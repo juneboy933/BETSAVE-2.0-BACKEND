@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+.env.*
+Backend/.env
+Backend/.env.*
+node_modules
+Backend/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
