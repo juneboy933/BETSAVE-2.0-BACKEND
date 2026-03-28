@@ -24,8 +24,7 @@ const withdrawalRequestSchema = new mongoose.Schema({
     paymentTransactionId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "PaymentTransaction",
-        default: null,
-        index: true
+        default: null
     },
 
     approvedBy: {
